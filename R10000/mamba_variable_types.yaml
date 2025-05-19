@@ -1,0 +1,50 @@
+#########1#########2#########3#########4#########5#########6#########7#########
+# File:    mamba_variable_types.yaml                                          #
+# Purpose: Defines the variable matching process                              #
+# Notes:   For each matching process, you must define variable_name, data1,   #
+#          data2 and match_type. parsed_variable, ccustom_variable_name,      #
+#          custom_variable_kwargs, and filter_only are optional.              #
+#          The character - represents a new variable matching process.        # 
+#########1#########2#########3#########4#########5#########6#########7#########
+#########1#########2#########3#########4#########5#########6#########7#########
+# Start yaml file                                                             #
+#########1#########2#########3#########4#########5#########6#########7#########
+---
+#########1#########2#########3#########4#########5#########6#########7#########
+# Define variable matching process for first_name                             #
+#########1#########2#########3#########4#########5#########6#########7#########
+-
+    variable_name: first_name
+    data1: first_name
+    data2: first_name
+    match_type: fuzzy
+    parsed_variable: 
+    custom_variable_kwargs: 
+    filter_only: 
+#########1#########2#########3#########4#########5#########6#########7#########
+# Define variable matching process for last_name                              #
+#########1#########2#########3#########4#########5#########6#########7#########
+-
+    variable_name: last_name
+    data1: last_name
+    data2: last_name
+    match_type: fuzzy
+    parsed_variable: 
+    custom_variable_name: 
+    custom_variable_kwargs: 
+    filter_only: 
+#########1#########2#########3#########4#########5#########6#########7#########
+# Define variable matching process for Dob                                    #
+#########1#########2#########3#########4#########5#########6#########7#########
+-
+    variable_name: Dob
+    data1: dob
+    data2: dob
+    match_type: date
+    parsed_variable: 
+    custom_variable_name: 
+    custom_variable_kwargs: 
+    filter_only: 
+#########1#########2#########3#########4#########5#########6#########7#########
+# End of yaml                                                                 #
+#########1#########2#########3#########4#########5#########6#########7#########

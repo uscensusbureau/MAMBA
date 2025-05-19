@@ -1,0 +1,5 @@
+/* https://stackoverflow.com/questions/71001226/text-and-icon-in-a-antd-button-are-not-aligned-vertically */
+.iconBtnFix button span {
+  display    : inline-flex !important;
+  align-items: center;
+}

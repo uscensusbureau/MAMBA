@@ -1,0 +1,45 @@
+CONFIG:
+  projectPath: /users/cuffe002/desktop/projects/mamba/mamba_edl/demo_business_data
+  mode: false
+  mode_only: false
+  sql_flavor: sqlite
+  db_name: sqlite_db.db
+  data1_name: data1
+  data2_name: data2
+  data1CustomSelectionStatement: ''
+  data2CustomSelectionStatement: ''
+  prediction: true
+  match_threshold: 0.5
+  scoring_criteria: ''
+  matched_pairs_table_name: matched_pairs
+  clerical_review_candidates: false
+  clerical_review_candidates_table_name: ''
+  use_mamba_models: false
+  saved_model: ''
+  use_ada: true
+  use_rf: true
+  use_logit: false
+  feature_elimination_mode: false
+  training_data_name: training_data.csv
+  saved_model_target: my_saved_model.joblib
+  used_fuzzy_metrics:
+    - feb.charhistogram
+    - feb.editdist
+    - feb.jaro
+  debug_blocks:
+    - block_order: '1'
+      block_variable_information:
+        - variable: zip3
+          value: '223'
+block_names:
+  - order: 1
+    block_name: zip3
+    data1: ''
+    data2: ''
+var_types:
+  - variable_name: name
+    custom_variable_name: ''
+    match_type:
+      - fuzzy
+    data1: name
+    data2: ''

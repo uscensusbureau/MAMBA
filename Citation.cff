@@ -1,0 +1,18 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: MAMBA: Multiple Algorithm Matching for Better Analytics
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: John
+    family-names: Cuffe
+    email: john.cuffe@census.gov
+  - {}
+  - given-names: Nathan
+    family-names: Goldschlag
+version: '3.0'
+date-released: '2025-05-19'

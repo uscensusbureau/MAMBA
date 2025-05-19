@@ -1,0 +1,32 @@
+name: mamba_env
+channels:
+  - defaults
+dependencies:
+  - openssl
+  - pip
+  - python=3.11.5
+  - pip:
+      - cryptography
+      - Cython
+      - dill
+      - docstring_parser
+      - jsonschema
+      - jsonschema-specifications
+      - markupsafe
+      - nltk
+      - numpy
+      - packaging
+      - pandas
+      - psutil
+      - psycopg2-binary
+      - pyarrow
+      - python-dateutil
+      - pytz
+      - pyyaml
+      - referencing
+      - scikit-learn
+      - splink
+      - statsmodels
+      - sqlalchemy
+      - sqlalchemy_serializer
+      - tzdata
