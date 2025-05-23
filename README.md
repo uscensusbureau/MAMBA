@@ -60,6 +60,8 @@ In order to use the GUI, you MUST have node.js installed.  If your compute envir
 
 This section will guide you through the configuration setup via the GUI.  IF you are unable to use the GUI, you can create your own configuration file using the legacy_configuration_name heading for each variable below.
 
+IF YOU ARE NOT using the GUI, then you will need to create a mamba_properties.yml file mirroring what is found in the demo files (R10000 and test_business_data), but do so at your own risk. I include the 'legacy' definitions below so you can maybe trace what went wrong. But I strongly recommend using the GUI.
+
 1.  CD into the gui directory in a terminal, then type ```npm start```.  
 2.  Your internet browser should pop up with a screen that looks like the below.  If your browser does not automatically open, navigate to http://localhost:5173/mamba_gui.
 ![gui_landing_page](./Documentation/screenshots/gui_landing_page.png)
