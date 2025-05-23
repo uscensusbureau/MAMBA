@@ -42,7 +42,6 @@ programs/custom_model.py
 programs/custom_model.py
 programs/connect_postgres.py
 markdown_to_html.py
-*.png
 Documentation/mamba talk notes.rtf
 *.so
 *.o
