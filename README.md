@@ -19,7 +19,7 @@ This prototype was developed as part of the Frames program at the U.S. Census Bu
 
 We appreciate any feedback you would like to provide us; please post any questions that you may have in the GitHub issues section
 
-Contributing: see [here](https://github.com/john-cuffe/MAMBA2/Contributing.md)
+Contributing: see [here](https://github.com/uscensusbureau/MAMBA/Contributing.md)
 
 ## Getting started
  <a id="Getting-started"/></a>
@@ -32,7 +32,7 @@ OPTIONAL BUT HIGHLY RECOMMENDED: Node.js > 20.0
 
 Getting MAMBA:
 
-Download from the GitHub repo, [https://github.com/john-cuffe/MAMBA2](https://github.com/john-cuffe/MAMBA2)
+Download from the GitHub repo, [here](https://github.com/uscensusbureau/MAMBA)
 
 ## What Does MAMBA do?
 
