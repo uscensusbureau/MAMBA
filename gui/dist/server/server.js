@@ -1,5 +1,6 @@
 const defaults = {
   port: 5173,
+  frameURL: 'http://localhost:9036'
 };
 
 // Import builtin NodeJS modules to instantiate the service
