@@ -17,7 +17,6 @@ setup_envs_python.py
 mamba_test_log
 programs/connect_sqlite.py
 programs/custom_*.py
-gui/dist/server/node_modules
 gui/node_modules
 gui/dist/server/node_modules
 gui/dist/server/node_modules/*
@@ -62,4 +61,3 @@ external_dedup_log.log
 *.log
 external_dedup_log.log
 gui/node_modules
-gui/dist
