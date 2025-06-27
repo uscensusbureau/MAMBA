@@ -680,7 +680,9 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                         label="DB Creation Chunksize"
                         tooltip="The chunk size you want to load the data into the database for."
                     >
-                        <Input defaultValue={100000}
+                        <Input
+                            defaultValue={100000}
+                            placeholder={100000}
                         />
                     </Form.Item>
                                 )}
