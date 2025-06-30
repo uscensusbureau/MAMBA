@@ -448,8 +448,8 @@ I know, that seems confusing.  So The next two sections are going to run you thr
        ![demo_business_data_name](./Documentation/screenshots/demo_business_data_tutorial/name.png)
     2. Address: comparing the addresses of the candidate pairs
        1. Variable Name: address
-       2. internal variable: address
-       3. external variable: street_address
+       2. internal variable: street_address
+       3. external variable: address
        4. Match Type: exact
        ![demo_business_data_address](./Documentation/screenshots/demo_business_data_tutorial/address.png)
     3. AddressNumber: this is a quick test of a custom function for address number.  The actual function doesn't make any sense.
