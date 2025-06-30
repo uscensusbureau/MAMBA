@@ -430,7 +430,7 @@ I know, that seems confusing.  So The next two sections are going to run you thr
           2. external variable name: zip5
           3. Match Type: exact
           4. Fuzzy Name: leave blank
-          5. Test: ==
+          5. Test: =
           6. Filter Value: leave blank
     2. 3 Digit Zip (no filter)
        1. Order: 2
@@ -438,7 +438,7 @@ I know, that seems confusing.  So The next two sections are going to run you thr
        3. internal variable: zip3
        4. external variable: zip3
 14. After the blocks you should be able to see this:
-![demo_business_data_blocks](./Documentation/screenshots/demo_business_data_tutorial/blocks.png)
+    ![demo_business_data_blocks](./Documentation/screenshots/demo_business_data_tutorial/blocks.png)
 15. Now our variables.  We will have several variables in this model just to show you the different capabilities of the system.
     1. Name: comparing the names of the candidate pairs
        1. Variable Name: Name

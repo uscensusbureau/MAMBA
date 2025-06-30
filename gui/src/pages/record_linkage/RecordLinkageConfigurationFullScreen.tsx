@@ -57,6 +57,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
     const [defaultLayout, setDefaultLayout] = useState(true);
     const [currentStep, setCurrentStep] = useState(0);
     const [form] = Form.useForm();
+    const matchType = Form.useWatch('match_type', form)
     const [activePanels, setActivePanels] = useState([]);
     const [blockInfoExpanded, setBlockInfoExpanded] = useState(true);
     const [variableTypesExpanded, setVariableTypesExpanded] = useState(true);
@@ -168,13 +169,12 @@ const RecordLinkageConfigurationFullScreen = (props) => {
     }, [data1]);
 
     const data1OnChange = (event) => {
-            setData1(event.target.value);
-            if (deduplicationMode){
-                setData1Display('left')
-            }
-            else {
-                setData1Display(event.target.value)
-            }
+        setData1(event.target.value);
+        if (deduplicationMode) {
+            setData1Display('left')
+        } else {
+            setData1Display(event.target.value)
+        }
     };
     //same for data2
     useEffect(() => {
@@ -188,7 +188,10 @@ const RecordLinkageConfigurationFullScreen = (props) => {
         setData2(event.target.value);
     };
 
-
+    function handleBlockFilter(target, value){
+        console.log(value)
+        console.log(target)
+    }
     //changing the sql flavor
     const handleSqlChange = (value) => {
         setSqlFlavor(value);
@@ -196,7 +199,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
     //change deduplication mode
     const handleDeduplicationChange = (value) => {
         setDeduplicationMode(value)
-        if (value===true){
+        if (value === true) {
             setData2('right')
         }
     }
@@ -250,16 +253,15 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                 const config = await readFileAsync(file);
                 if (setExistingConfig) {
                     setActivePanels(['batchInformation', 'dbInformation', 'dataSources',
-                            'blockingAndVariableInformation', 'modelOutputs', 'model',
-                            'debugBlocks']
+                        'blockingAndVariableInformation', 'modelOutputs', 'model',
+                        'debugBlocks']
                     )
                     setData1(config.CONFIG.data1_name)
                     setDeduplicationMode(config.CONFIG.mode === 'deduplication')
                     console.log(deduplicationMode)
-                    if (!config.CONFIG.mode){
+                    if (!config.CONFIG.mode) {
                         setData2(config.CONFIG.data2_name)
-                    }
-                    else{
+                    } else {
                         setData1('left')
                         setData2('right')
                     }
@@ -275,8 +277,8 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                         create_db_chunksize: (config.CONFIG && config.CONFIG.create_db_chunksize) ? config.CONFIG.database_creation_mode : 100000,
                         chatty_logger: (config.CONFIG && config.CONFIG.chatty_logger) ? config.CONFIG.chatty_logger : false,
                         log_file_name: (config.CONFIG && config.CONFIG.log_file_name) ? config.CONFIG.log_file_name : 'mamba_log',
-                        numWorkers:(config.CONFIG && config.CONFIG.numWorkers) ? config.CONFIG.numWorkers : 2,
-                        imputation_method:(config.CONFIG && config.CONFIG.imputation_method) ? config.CONFIG.imputation_method : 'No Imputation',
+                        numWorkers: (config.CONFIG && config.CONFIG.numWorkers) ? config.CONFIG.numWorkers : 2,
+                        imputation_method: (config.CONFIG && config.CONFIG.imputation_method) ? config.CONFIG.imputation_method : 'No Imputation',
                         /** Project and BAtch DB Info End */
                         /**DB Information Start */
                         sql_flavor: (config.CONFIG && config.CONFIG.sql_flavor) ? config.CONFIG.sql_flavor : '',
@@ -302,8 +304,8 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                         blocks: config.blocks ? config.blocks.map(block => ({
                             order: block.order,
                             block_name: block.block_name,
-                            data1BlockVar: config.CONFIG.mode==='deduplication' ? block['left'] : block[config.CONFIG.data2_name],
-                            data2BlockVar: config.CONFIG.mode==='deduplication' ? block['right'] : block[config.CONFIG.data2_name],
+                            data1BlockVar: config.CONFIG.mode === 'deduplication' ? block['left'] : block[config.CONFIG.data2_name],
+                            data2BlockVar: config.CONFIG.mode === 'deduplication' ? block['right'] : block[config.CONFIG.data2_name],
                             variable_filter_info: block['variable_filter_info'] ? [{
                                 data1VariableFilter: block.variable_filter_info[config.CONFIG.data1_name],
                                 data2VariableFilter: block.variable_filter_info[config.CONFIG.data2_name],
@@ -316,8 +318,8 @@ const RecordLinkageConfigurationFullScreen = (props) => {
 
                         variable_types: config.var_types ? config.var_types.map(type => ({
                             variable_name: type.variable_name,
-                            data1TypeVar: config.CONFIG.mode==='deduplication' ? type['left'] : type[config.CONFIG.data1_name],
-                            data2TypeVar: config.CONFIG.mode==='deduplication' ? type['right'] : type[config.CONFIG.data2_name],
+                            data1TypeVar: config.CONFIG.mode === 'deduplication' ? type['left'] : type[config.CONFIG.data1_name],
+                            data2TypeVar: config.CONFIG.mode === 'deduplication' ? type['right'] : type[config.CONFIG.data2_name],
                             match_type: type.match_type ?? '',
                             custom_variable_name: type.custom_variable_name ?? '',
                             custom_kwarg_args: type.custom_variable_kwargs ? Object.keys(type.custom_variable_kwargs).map(argKey => ({
@@ -325,10 +327,12 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                                 kwargvalue: type.custom_variable_kwargs[argKey]
                             })) : [],
                             filter_only: type.filter_only ? [
-                                {test: type.filter_only['test'],
-                                value: type.filter_only['value'],
-                                fuzzy_name: type.filter_only['fuzzy_name'] ? type.filter_only['fuzzy_name'] : null}]
-                             : []
+                                    {
+                                        test: type.filter_only['test'],
+                                        value: type.filter_only['value'],
+                                        fuzzy_name: type.filter_only['fuzzy_name'] ? type.filter_only['fuzzy_name'] : null
+                                    }]
+                                : []
                         })) : [],
                         /** Blocking and Variable Information End */
                         /** Model Outputs Start */
@@ -408,10 +412,6 @@ const RecordLinkageConfigurationFullScreen = (props) => {
         form.resetFields()
         setYamlData(null)
     }
-    /* handling when the fuzzy value changes */
-    const onCheckboxChange = (checkedValues) => {
-    console.log('Checked values:', checkedValues);
-  };
 
     const generatePayload = (values) => {
         console.log(values.mode)
@@ -484,18 +484,16 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                     if (!values.mode) {
                         blockJSON[data1] = block.data1BlockVar;
                         blockJSON[data2] = block.data2BlockVar;
-                    }
-                    else {
+                    } else {
                         blockJSON['left'] = block.data1BlockVar;
                         blockJSON['right'] = block.data2BlockVar;
                     }
                     if (block.variable_filter_info && block.variable_filter_info.length > 0) {
                         blockJSON.variable_filter_info = {};
                         if (!values.mode) {
-                        blockJSON.variable_filter_info[data1] = block.variable_filter_info[0]['data1VariableFilter'];
-                        blockJSON.variable_filter_info[data2] = block.variable_filter_info[0]['data2VariableFilter'];
-                    }
-                        else {
+                            blockJSON.variable_filter_info[data1] = block.variable_filter_info[0]['data1VariableFilter'];
+                            blockJSON.variable_filter_info[data2] = block.variable_filter_info[0]['data2VariableFilter'];
+                        } else {
                             blockJSON.variable_filter_info['left'] = block.variable_filter_info[0]['data1VariableFilter'];
                             blockJSON.variable_filter_info['right'] = block.variable_filter_info[0]['data2VariableFilter'];
                         }
@@ -503,8 +501,9 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                         if (block.variable_filter_info[0].fuzzy_name) blockJSON.variable_filter_info.fuzzy_name = block.variable_filter_info[0].fuzzy_name;
                         if (block.variable_filter_info[0].test) blockJSON.variable_filter_info.test = block.variable_filter_info[0].test;
                         if (block.variable_filter_info[0].filter_value) blockJSON.variable_filter_info.fuzzy_name = block.variable_filter_info[0].filter_value;
+                    } else {
+                        blockJSON.variable_filter_info
                     }
-                    else {blockJSON.variable_filter_info}
                     return blockJSON;
                 }),
                 var_types: values.variable_types.map(type => {
@@ -516,8 +515,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                     if (!values.mode) {
                         typeJSON[data1] = type.data1TypeVar;
                         typeJSON[data2] = type.data2TypeVar;
-                    }
-                    else {
+                    } else {
                         typeJSON['left'] = type.data1TypeVar;
                         typeJSON['right'] = type.data2TypeVar;
                     }
@@ -538,9 +536,9 @@ const RecordLinkageConfigurationFullScreen = (props) => {
         /* add custom selection statement */
         payload.config.CONFIG['custom_selection_statement'] = {}
         if (!values.mode) {
-        payload.config.CONFIG['custom_selection_statement'][`${data1}`] = values.data1CustomSelectionStatement ?? ''
-        payload.config.CONFIG['custom_selection_statement'][`${data2}`] = values.data2CustomSelectionStatement ?? '' }
-        else {
+            payload.config.CONFIG['custom_selection_statement'][`${data1}`] = values.data1CustomSelectionStatement ?? ''
+            payload.config.CONFIG['custom_selection_statement'][`${data2}`] = values.data2CustomSelectionStatement ?? ''
+        } else {
             payload.config.CONFIG['custom_selection_statement']['left'] = values.data1CustomSelectionStatement ?? ''
             payload.config.CONFIG['custom_selection_statement']['right'] = values.data2CustomSelectionStatement ?? ''
         }
@@ -585,7 +583,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
     }
     const batchInformationFields = <>
         <Row gutter={8}>
-            <Col span={12} >
+            <Col span={12}>
                 <Form.Item
                     name="projectPath"
                     label="Project sub-folder"
@@ -595,98 +593,100 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                 </Form.Item>
             </Col>
             <Col span={24}>
-            <Space size={'large'}>
-                <Form.Item
-                    name="mode" valuePropName="checked" layout="horizontal"
-                    label="Deduplication Mode"
-                    tooltip="Are you linking two datasets or de-duplicating a single dataset?"
-                    style={{marginBottom: 0, marginRight: 100}}
-                >
-                    <Switch checkedChildren="Deduplication" unCheckedChildren="Matching" onClick={handleDeduplicationChange}/>
-                </Form.Item>
-                <Form.Item
-                    name="ignore_duplicate_ids" valuePropName="checked" layout="horizontal"
-                    label="Ignore Duplicate IDs?"
-                    tooltip="Do you want MAMBA to ignore pairs where the id variable is the same?"
-                    style={{marginBottom: 0}}
-                >
-                    <Switch checkedChildren="Yes" unCheckedChildren="No"/>
-                </Form.Item>
-                <Form.Item
-                    name="model_only" valuePropName="checked" layout="horizontal"
-                    label="Model Only?"
-                    tooltip="Are you just generating a model and not attempting a larger linkage?"
-                    style={{marginBottom: 0}}
-                >
-                    <Switch checkedChildren="Yes" unCheckedChildren="No"/>
-                </Form.Item>
-                <Form.Item
-                    name="debugmode" valuePropName="checked" layout="horizontal"
-                    label="Debug Mode?"
-                    tooltip="In debug mode, the logger is chattier and fewer model iterations are run."
-                    style={{marginBottom: 0}}
-                >
-                    <Switch checkedChildren="Yes" unCheckedChildren="No"/>
-                </Form.Item>
-                <Form.Item
-                    name="imputation_method"
-                    label="Imputation Method"
-                    tooltip="In the case of missing data, do you want to use an Interative Imputer, Nominal, or No Imputation (see Readme for details)"
-                    style={{marginBottom: 0}}
-                >
-                    <Select options={[{value: "No Imputation"},{value:"Imputer"}, {value:"Nominal"}]} defaultValue={"No Imputation"}/>
-                </Form.Item>
-            </Space>
-            </Col>
-            <Col span={24}>
-            <Space size={'large'}>
-            <Form.Item
-                name="chatty_logger" valuePropName="checked" layout="horizontal"
-                label="Chatty Logger?"
-                tooltip="True/False.  If true, the logger will give you lots and lots of updates after each block."
-                style={{marginBottom: 0}}
-            >
-                <Switch checkedChildren="Yes" unCheckedChildren="No"/>
-            </Form.Item>
-            <Form.Item
-                name="log_file_name" layout="horizontal"
-                label="Log File Name"
-                tooltip="The name of the log file you want to use."
-                style={{marginBottom: 0}}
-            >
-                <Input/>
-            </Form.Item>
-                <Form.Item
-                    label="Number of Workers"
-                    tooltip={"The number of sub-processors you want to run"}
-                    name={'numWorkers'}>
-                    <InputNumber min={1}/>
-                </Form.Item>
-            </Space>
-            </Col>
-            <Col span={24}>
-            <Space size={'large'}>
-            <Form.Item
-                    name="database_creation_mode" valuePropName="checked" layout="horizontal"
-                    label="Database Creation Mode"
-                    tooltip="Are you linking two datasets or de-duplicating a single dataset?"
-                    style={{marginBottom: 0}}
-                >
-                    <Switch checkedChildren="Create" unCheckedChildren="Existing" onChange={handleDBModeChange}/>
-                </Form.Item>
-                {dbCreationMode == true && (
+                <Space size={'large'}>
                     <Form.Item
-                        name="create_db_chunksize"
-                        label="DB Creation Chunksize"
-                        tooltip="The chunk size you want to load the data into the database for."
+                        name="mode" valuePropName="checked" layout="horizontal"
+                        label="Deduplication Mode"
+                        tooltip="Are you linking two datasets or de-duplicating a single dataset?"
+                        style={{marginBottom: 0, marginRight: 100}}
                     >
-                        <Input
-                            defaultValue={100000}
-                            placeholder={100000}
-                        />
+                        <Switch checkedChildren="Deduplication" unCheckedChildren="Matching"
+                                onClick={handleDeduplicationChange}/>
                     </Form.Item>
-                                )}
-            </Space>
+                    <Form.Item
+                        name="ignore_duplicate_ids" valuePropName="checked" layout="horizontal"
+                        label="Ignore Duplicate IDs?"
+                        tooltip="Do you want MAMBA to ignore pairs where the id variable is the same?"
+                        style={{marginBottom: 0}}
+                    >
+                        <Switch checkedChildren="Yes" unCheckedChildren="No"/>
+                    </Form.Item>
+                    <Form.Item
+                        name="model_only" valuePropName="checked" layout="horizontal"
+                        label="Model Only?"
+                        tooltip="Are you just generating a model and not attempting a larger linkage?"
+                        style={{marginBottom: 0}}
+                    >
+                        <Switch checkedChildren="Yes" unCheckedChildren="No"/>
+                    </Form.Item>
+                    <Form.Item
+                        name="debugmode" valuePropName="checked" layout="horizontal"
+                        label="Debug Mode?"
+                        tooltip="In debug mode, the logger is chattier and fewer model iterations are run."
+                        style={{marginBottom: 0}}
+                    >
+                        <Switch checkedChildren="Yes" unCheckedChildren="No"/>
+                    </Form.Item>
+                    <Form.Item
+                        name="imputation_method"
+                        label="Imputation Method"
+                        tooltip="In the case of missing data, do you want to use an Interative Imputer, Nominal, or No Imputation (see Readme for details)"
+                        style={{marginBottom: 0}}
+                    >
+                        <Select options={[{value: "No Imputation"}, {value: "Imputer"}, {value: "Nominal"}]}
+                                defaultValue={"No Imputation"}/>
+                    </Form.Item>
+                </Space>
+            </Col>
+            <Col span={24}>
+                <Space size={'large'}>
+                    <Form.Item
+                        name="chatty_logger" valuePropName="checked" layout="horizontal"
+                        label="Chatty Logger?"
+                        tooltip="True/False.  If true, the logger will give you lots and lots of updates after each block."
+                        style={{marginBottom: 0}}
+                    >
+                        <Switch checkedChildren="Yes" unCheckedChildren="No"/>
+                    </Form.Item>
+                    <Form.Item
+                        name="log_file_name" layout="horizontal"
+                        label="Log File Name"
+                        tooltip="The name of the log file you want to use."
+                        style={{marginBottom: 0}}
+                    >
+                        <Input/>
+                    </Form.Item>
+                    <Form.Item
+                        label="Number of Workers"
+                        tooltip={"The number of sub-processors you want to run"}
+                        name={'numWorkers'}>
+                        <InputNumber min={1}/>
+                    </Form.Item>
+                </Space>
+            </Col>
+            <Col span={24}>
+                <Space size={'large'}>
+                    <Form.Item
+                        name="database_creation_mode" valuePropName="checked" layout="horizontal"
+                        label="Database Creation Mode"
+                        tooltip="Are you linking two datasets or de-duplicating a single dataset?"
+                        style={{marginBottom: 0}}
+                    >
+                        <Switch checkedChildren="Create" unCheckedChildren="Existing" onChange={handleDBModeChange}/>
+                    </Form.Item>
+                    {dbCreationMode == true && (
+                        <Form.Item
+                            name="create_db_chunksize"
+                            label="DB Creation Chunksize"
+                            tooltip="The chunk size you want to load the data into the database for."
+                        >
+                            <Input
+                                defaultValue={100000}
+                                placeholder={100000}
+                            />
+                        </Form.Item>
+                    )}
+                </Space>
             </Col>
         </Row>
     </>;
@@ -792,7 +792,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
             <Col span={6}>
                 <Form.Item
                     name="data1CustomSelectionStatement"
-                    label= {`${data1} Custom Selection Statement`}
+                    label={`${data1} Custom Selection Statement`}
                     tooltip={`What are the restrictions you want to place on this dataset? Must be resolvable SQL query after a 'where' statement.`}
                 >
                     <Input placeholder={""}/>
@@ -877,7 +877,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                                             <Form.Item
                                                 label={`${data1Display} variable(s)`}
                                                 name={[field.name, 'data1BlockVar']}
-                                                rules={[{ min:2, message: 'foo' }]}
+                                                rules={[{min: 2, message: 'foo'}]}
                                                 tooltip='comma and space-separated variables used to construct this block.'>
                                                 <Input/>
                                             </Form.Item>
@@ -894,87 +894,115 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                                     <Form.List
                                         name={[field.name, 'variable_filter_info']}>
                                         {(subFields, subOpt) => (
-                                            <div style={{maxHeight: 300, overflow: 'auto', paddingRight: 10}}>
+                                            <div style={{maxHeight: 4000, overflow: 'auto', paddingRight: 10}}>
                                                 {subFields.map((subField) => (
-                                                    <Space key={subField.key}>
-                                                        <Form.Item
-                                                            label={`${data1Display} variable name`}
-                                                            name={[subField.name, 'data1VariableFilter']}>
-                                                            <Input/>
-                                                        </Form.Item>
-                                                        <Form.Item
-                                                            label={`${data2} variable name`}
-                                                            name={[subField.name, 'data2VariableFilter']}>
-                                                            <Input/>
-                                                        </Form.Item>
-                                                        <Form.Item
-                                                            label="Match Type"
-                                                            name={[subField.name, 'match_type']}
-                                                        >
-                                                            <Select
-                                                                options={[{value: 'fuzzy', label: 'Fuzzy'},
-                                                                    {value: 'num_distance', label: 'Numeric Distance'},
-                                                                    {value: 'exact', label: 'Exact'},
-                                                                    {value: 'soundex', label: 'Soundex'},
-                                                                    {value: 'nysiis', label: 'NYSIIS'},
-                                                                    {
-                                                                        value: 'geo_distance',
-                                                                        label: 'Geographic Distance'
-                                                                    },
-                                                                    {value: 'date', label: 'Date'},
-                                                                    {value: 'custom', label: 'Custom'}]}
-                                                                showSearch={true}
-                                                            />
-                                                        </Form.Item>
-                                                        <Form.Item
-                                                            label="Fuzzy Name"
-                                                            name={[subField.name, 'fuzzy_name']}>
-                                                            <Input
-                                                                placeholder='Only available when Match Type = Fuzzy'/>
-                                                        </Form.Item>
-                                                        <Form.Item
-                                                            label="Test"
-                                                            name={[subField.name, 'test']}>
-                                                            <Select
-                                                                // options={[{ value: '==', label: 'Equals' },
-                                                                // { value: '!=', label: 'Does not equal' },
-                                                                // { value: '>', label: 'Greater Than' },
-                                                                // {
-                                                                //   value: '>=',
-                                                                //   label: 'Greater Than or Equal to'
-                                                                // },
-                                                                // { value: '<', label: 'Less Than' },
-                                                                // {
-                                                                //   value: '<=',
-                                                                //   label: 'Less Than or Equal to'
-                                                                // },
-                                                                // { value: 'custom', label: 'Custom' }]}
-                                                                options={[
-                                                                    {value: '==', label: '=='},
-                                                                    {value: '!=', label: '!='},
-                                                                    {value: '>', label: '>'},
-                                                                    {value: '>=', label: '>='},
-                                                                    {value: '<', label: '<'},
-                                                                    {value: '<=', label: '<='},
-                                                                    {value: 'custom', label: 'Custom'}
-                                                                ]}
-                                                            />
-                                                        </Form.Item>
-                                                        <Form.Item
-                                                            label="Filter Value"
-                                                            name={[subField.name, 'filter_value']}>
-                                                            <Input/>
-                                                        </Form.Item>
-                                                        <CloseOutlined
-                                                            onClick={() => {
-                                                                subOpt.remove(subField.name);
-                                                            }}/>
-                                                    </Space>
+                                                    <Card
+                                                        extra={
+                                                            <CloseOutlined
+                                                                onClick={() => {
+                                                                    subOpt.remove(subField.name);
+                                                                }}/>
+                                                        }>
+                                                        <Row gutter={8}>
+                                                            <Col span={12}>
+                                                                <Form.Item
+                                                                    label={`${data1Display} variable name`}
+                                                                    name={[subField.name, 'data1VariableFilter']}>
+                                                                    <Input/>
+                                                                </Form.Item>
+                                                            </Col>
+                                                            <Col span={12}>
+                                                                <Form.Item
+                                                                    label={`${data2} variable name`}
+                                                                    name={[subField.name, 'data2VariableFilter']}>
+                                                                    <Input/>
+                                                                </Form.Item>
+                                                            </Col>
+                                                        </Row>
+                                                        <Row gutter={8}>
+                                                            <Col span={12}>
+                                                                <Form.Item
+                                                                    label="Match Type"
+                                                                    name={[subField.name, 'match_type']}
+                                                                >
+                                                                    <Select
+                                                                        options={[{value: 'fuzzy', label: 'Fuzzy'},
+                                                                            {
+                                                                                value: 'num_distance',
+                                                                                label: 'Numeric Distance'
+                                                                            },
+                                                                            {value: 'exact', label: 'Exact'},
+                                                                            {value: 'soundex', label: 'Soundex'},
+                                                                            {value: 'nysiis', label: 'NYSIIS'},
+                                                                            {
+                                                                                value: 'geo_distance',
+                                                                                label: 'Geographic Distance'
+                                                                            },
+                                                                            {value: 'date', label: 'Date'},
+                                                                            {value: 'custom', label: 'Custom'}]}
+                                                                        showSearch={true}
+                                                                    />
+                                                                </Form.Item>
+                                                            </Col>
+                                                            <Col span={12}>
+                                                                <Form.Item
+                                                                    label="Fuzzy Name"
+                                                                    name={[subField.name, 'fuzzy_name']}
+                                                                >
+                                                                    <Input
+                                                                        disabled={matchType==='fuzzy'}
+                                                                        placeholder='Only available when Match Type = Fuzzy'/>
+                                                                </Form.Item>
+                                                            </Col>
+                                                        </Row>
+                                                        <Row gutter={8}>
+                                                            <Col span={12}>
+                                                                <Form.Item
+                                                                    label="Test"
+                                                                    name={[subField.name, 'test']}>
+                                                                    <Select
+                                                                        // options={[{ value: '==', label: 'Equals' },
+                                                                        // { value: '!=', label: 'Does not equal' },
+                                                                        // { value: '>', label: 'Greater Than' },
+                                                                        // {
+                                                                        //   value: '>=',
+                                                                        //   label: 'Greater Than or Equal to'
+                                                                        // },
+                                                                        // { value: '<', label: 'Less Than' },
+                                                                        // {
+                                                                        //   value: '<=',
+                                                                        //   label: 'Less Than or Equal to'
+                                                                        // },
+                                                                        // { value: 'custom', label: 'Custom' }]}
+                                                                        options={[
+                                                                            {value: '==', label: '=='},
+                                                                            {value: '!=', label: '!='},
+                                                                            {value: '>', label: '>'},
+                                                                            {value: '>=', label: '>='},
+                                                                            {value: '<', label: '<'},
+                                                                            {value: '<=', label: '<='},
+                                                                            {value: 'custom', label: 'Custom'}
+                                                                        ]}
+                                                                    />
+                                                                </Form.Item>
+                                                            </Col>
+                                                            <Col span={12}>
+                                                                <Form.Item
+                                                                    label="Filter Value"
+                                                                    name={[subField.name, 'filter_value']}>
+                                                                    <Input/>
+                                                                </Form.Item>
+                                                            </Col>
+                                                            <Col span={2}>
+                                                            </Col>
+                                                        </Row>
+                                                    </Card>
                                                 ))}
                                                 <Button type="dashed" onClick={() => subOpt.add()} block
                                                         disabled={subFields.length > 0}>
                                                     + Add Variable Filter Information
                                                 </Button>
+
                                             </div>
                                         )}
                                     </Form.List>
@@ -1126,7 +1154,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                               <p className="ant-upload-text">
                                 Add Custom Variable Kwargs
                               </p>
-                                <p className="ant-upload-hint" style={{width:200}}>
+                                <p className="ant-upload-hint" style={{width: 200}}>
                                  If this variable is a custom variable, add keyword arguments here.
                                  </p>
                             </Dragger>
@@ -1181,11 +1209,11 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                                                                 <Input placeholder=""/>
                                                             </Form.Item>
                                                             <Form.Item
-                                                            label="Fuzzy Name"
-                                                            tooltip={"If this is a fuzzy variable, what is the fuzzy metric (e.g. jaro, qgram3) you want to use?"}
-                                                            name={[subField.name, 'fuzzy_name']}>
-                                                            <Input/>
-                                                        </Form.Item>
+                                                                label="Fuzzy Name"
+                                                                tooltip={"If this is a fuzzy variable, what is the fuzzy metric (e.g. jaro, qgram3) you want to use?"}
+                                                                name={[subField.name, 'fuzzy_name']}>
+                                                                <Input/>
+                                                            </Form.Item>
                                                         </Card>
                                                     ))}
                                                     <span onClick={() => subOpt.add()}>
@@ -1198,7 +1226,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                               <p className="ant-upload-text">
                                 Click to Make This Variable A Filter
                               </p>
-                                <p className="ant-upload-hint" style={{width:200}}>
+                                <p className="ant-upload-hint" style={{width: 200}}>
                                  Use this feature to use this variable only to filter potential matches.
                                  </p>
                             </Dragger>
@@ -1256,46 +1284,46 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                 </Form.Item>
             </Col>
             {usePrediction && (
-            <Col span={7}>
-                <Form.Item
-                    name="match_threshold"
-                    label="Match Threshold"
-                    tooltip="What is the match threshold you want to apply to your model?"
-                    rules={[
-                        {required: usePrediction, message: "Please choose a match threshold."},
-                    ]}
-                >
-                    <InputNumber min={0} maxfractiondigits={2} step={.05} defaultValue={.5}/>
-                </Form.Item>
-            </Col>
+                <Col span={7}>
+                    <Form.Item
+                        name="match_threshold"
+                        label="Match Threshold"
+                        tooltip="What is the match threshold you want to apply to your model?"
+                        rules={[
+                            {required: usePrediction, message: "Please choose a match threshold."},
+                        ]}
+                    >
+                        <InputNumber min={0} maxfractiondigits={2} step={.05} defaultValue={.5}/>
+                    </Form.Item>
+                </Col>
             )}
             {usePrediction && (
-            <Col span={7}>
-                <Form.Item
-                    name="scoringcriteria"
-                    label="Scoring Criteria"
-                    tooltip="What scoring criteria are you applying to the model?"
-                    rules={[
-                        {required: useMambaModels, message: "Please choose a scoring criteria."},
-                    ]}
-                >
-                    <Input/>
-                </Form.Item>
-            </Col>
+                <Col span={7}>
+                    <Form.Item
+                        name="scoringcriteria"
+                        label="Scoring Criteria"
+                        tooltip="What scoring criteria are you applying to the model?"
+                        rules={[
+                            {required: useMambaModels, message: "Please choose a scoring criteria."},
+                        ]}
+                    >
+                        <Input/>
+                    </Form.Item>
+                </Col>
             )}
             {usePrediction && (
-            <Col span={7}>
-                <Form.Item
-                    name="matched_pairs_table_name"
-                    label="Matched Pairs Table Name"
-                    tooltip="What is the name of the matched pairs table you want to push linkages to?"
-                    rules={[
-                        {required: usePrediction, message: "Please choose a matched pairs table name."},
-                    ]}
-                >
-                    <Input/>
-                </Form.Item>
-            </Col>            )}
+                <Col span={7}>
+                    <Form.Item
+                        name="matched_pairs_table_name"
+                        label="Matched Pairs Table Name"
+                        tooltip="What is the name of the matched pairs table you want to push linkages to?"
+                        rules={[
+                            {required: usePrediction, message: "Please choose a matched pairs table name."},
+                        ]}
+                    >
+                        <Input/>
+                    </Form.Item>
+                </Col>)}
 
         </Row>
         <Typography.Title level={5}>
@@ -1312,71 +1340,71 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                 </Form.Item>
             </Col>
             {useClericalReviewCandidates && (
-            <Col span={7}>
-                <Form.Item
-                    name="clerical_review_candidates_table_name"
-                    label="Clerical Review Candidates Table Name"
-                    tooltip="What is the name of the clerical review candidates table you want to push candidate pairs to?"
-                >
-                    <Input/>
-                </Form.Item>
-            </Col>
-                 )}
-                        {useClericalReviewCandidates && (
-            <Col span={7}>
-                <Form.Item
-                    label="Clerical Review Thresholds">
-                    <Form.List name='clerical_review_thresholds'>
-                        {(subFields, subOpt) => (
-                            <div style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                rowGap: 8
-                            }}>
-                                {subFields.map((subField) => (
-                                    <Space key={subField.key}>
-                                        <Form.Item
-                                            label={`Variable Name`}
-                                            name={[subField.name, 'variable_name']}
-                                            tooltip={"The name of the variable you want to serve as a filter.  If this is a fuzzy variable, needs to be of the form {variable_name}_{fuzzy_comparison}"}>
-                                            <Input placeholder=""/>
-                                        </Form.Item>
-                                        <Form.Item
-                                            label={`Value`}
-                                            name={[subField.name, 'value']}
-                                            tooltip={"The value that all clerical review thresholds must be greater than to be counted."}>
-                                            <Input placeholder=""/>
-                                        </Form.Item>
-                                        <CloseOutlined
-                                            onClick={() => {
-                                                subOpt.remove(subField.name);
-                                            }}
-                                        />
-                                    </Space>
-                                ))}
-                                <Button type="dashed" onClick={() => subOpt.add()} block>
-                                    + Add Clerical Review Threshold
-                                </Button>
-                            </div>
-                        )}
-                    </Form.List>
-                </Form.Item>
-            </Col>
+                <Col span={7}>
+                    <Form.Item
+                        name="clerical_review_candidates_table_name"
+                        label="Clerical Review Candidates Table Name"
+                        tooltip="What is the name of the clerical review candidates table you want to push candidate pairs to?"
+                    >
+                        <Input/>
+                    </Form.Item>
+                </Col>
             )}
             {useClericalReviewCandidates && (
-            <Col span={7}>
-                <Form.Item
-                    label="Query Logic"
-                    name='query_logic'
-                    tooltip="If using multiple thresholds, what is the logic to include candidates?">
-                    <Cascader
-                        options={[
-                            {value: 'and', label: 'And'},
-                            {value: 'or', label: 'Or'}]}
-                        showSearch={true}
-                    />
-                </Form.Item>
-            </Col>
+                <Col span={7}>
+                    <Form.Item
+                        label="Clerical Review Thresholds">
+                        <Form.List name='clerical_review_thresholds'>
+                            {(subFields, subOpt) => (
+                                <div style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    rowGap: 8
+                                }}>
+                                    {subFields.map((subField) => (
+                                        <Space key={subField.key}>
+                                            <Form.Item
+                                                label={`Variable Name`}
+                                                name={[subField.name, 'variable_name']}
+                                                tooltip={"The name of the variable you want to serve as a filter.  If this is a fuzzy variable, needs to be of the form {variable_name}_{fuzzy_comparison}"}>
+                                                <Input placeholder=""/>
+                                            </Form.Item>
+                                            <Form.Item
+                                                label={`Value`}
+                                                name={[subField.name, 'value']}
+                                                tooltip={"The value that all clerical review thresholds must be greater than to be counted."}>
+                                                <Input placeholder=""/>
+                                            </Form.Item>
+                                            <CloseOutlined
+                                                onClick={() => {
+                                                    subOpt.remove(subField.name);
+                                                }}
+                                            />
+                                        </Space>
+                                    ))}
+                                    <Button type="dashed" onClick={() => subOpt.add()} block>
+                                        + Add Clerical Review Threshold
+                                    </Button>
+                                </div>
+                            )}
+                        </Form.List>
+                    </Form.Item>
+                </Col>
+            )}
+            {useClericalReviewCandidates && (
+                <Col span={7}>
+                    <Form.Item
+                        label="Query Logic"
+                        name='query_logic'
+                        tooltip="If using multiple thresholds, what is the logic to include candidates?">
+                        <Cascader
+                            options={[
+                                {value: 'and', label: 'And'},
+                                {value: 'or', label: 'Or'}]}
+                            showSearch={true}
+                        />
+                    </Form.Item>
+                </Col>
             )}
         </Row>
     </>;
@@ -1432,7 +1460,8 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                             label={"Fit a Random Forest Model?"}
                             tooltip="Do you want MAMBA to try to fit Random Forest model?"
                         >
-                            <Switch checkedChildren="Yes" unCheckedChildren="No" onChange={handleRandomForestChange} disabled={!useMambaModels}/>
+                            <Switch checkedChildren="Yes" unCheckedChildren="No" onChange={handleRandomForestChange}
+                                    disabled={!useMambaModels}/>
                         </Form.Item>
                         <Form.Item
                             name="use_logit" valuePropName="checked" layout="horizontal"
@@ -1448,13 +1477,13 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                         >
                             <Switch checkedChildren="Yes" unCheckedChildren="No" disabled={!useMambaModels}/>
                         </Form.Item>
-                    <Form.Item
-                        name="rf_jobs"
-                        label="Random Forest Jobs"
-                        tooltip="The number of jobs you want to have the random forest run (more jobs = more memory but faster processing)."
-                    >
-                        <Input disabled={!useRandomForest}/>
-                    </Form.Item>
+                        <Form.Item
+                            name="rf_jobs"
+                            label="Random Forest Jobs"
+                            tooltip="The number of jobs you want to have the random forest run (more jobs = more memory but faster processing)."
+                        >
+                            <Input disabled={!useRandomForest}/>
+                        </Form.Item>
                     </Space>
                 </Col>
                 <Col span={12}>
@@ -1488,7 +1517,6 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                     <Checkbox.Group
                         options={fuzzyOptions}
                         defaultValue={checkedValues}
-                        onChange={onCheckboxChange}
                     />
                 </Form.Item>
             </Col>
@@ -1601,9 +1629,10 @@ const RecordLinkageConfigurationFullScreen = (props) => {
         <Card
             styles={{wrapper: {height: '100vh'}}}
             title={<>Mamba Configuration Page.
-                                    <div></div>
-                Use this page to create a configuration.  Once you click 'Save Form Configuration', save the downloaded file into your project directory.
-                                    <div></div>
+                <div></div>
+                Use this page to create a configuration. Once you click 'Save Form Configuration', save the downloaded
+                file into your project directory.
+                <div></div>
                 <Tooltip title="Choose the layout style to view the form">
                     <div></div>
                     <Switch checked={defaultLayout} onChange={() => setDefaultLayout(!defaultLayout)}
@@ -1634,24 +1663,24 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                   form={form}
                   initialValues={
                       {
-                        /**project and batch information */
+                          /**project and batch information */
                           projectPath: '',
                           mode: false,
                           model_only: false,
                           database_creation_mode: false,
                           create_db_chunksize: null,
-                         /**db information */
-                         sql_flavor: null,
+                          /**db information */
+                          sql_flavor: null,
                           db_name: null,
-                        /**data source information */
+                          /**data source information */
                           data1: null,
                           data1CustomSelectionStatement: '',
                           data2: null,
                           data2CustomSelectionStatement: '',
-                        /**block names and types */
+                          /**block names and types */
                           blocks: [],
                           variable_types: [],
-                        /**model outputs */
+                          /**model outputs */
                           prediction: false,
                           match_threshold: .5,
                           scoringcriteria: '',
@@ -1660,7 +1689,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                           clerical_review_candidates_table_name: '',
                           clerical_review_thresholds: [],
                           query_logic: '',
-                        /**the model */
+                          /**the model */
                           use_mamba_models: false,
                           saved_model: '',
                           use_ada: false,
@@ -1671,7 +1700,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                           training_data_name: '',
                           saved_model_target: '',
                           used_fuzzy_metrics: [],
-                        /**debug blocks */
+                          /**debug blocks */
                           debug_blocks: []
                       }}>
                 {
@@ -1686,10 +1715,10 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                                           children: batchInformationFields
                                       },
                                       {
-                                        key: 'dbInformation',
-                                        label: 'DB Information',
-                                        children: dbInformationFields
-                                    },
+                                          key: 'dbInformation',
+                                          label: 'DB Information',
+                                          children: dbInformationFields
+                                      },
                                       {
                                           key: 'dataSources',
                                           label: 'Data Sources',
