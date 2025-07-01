@@ -67,6 +67,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
 
     const [data1, setData1] = useState('');
     const [data1Display, setData1Display] = useState('');
+    const [data2Display, setData2Display] = useState('');
     const [data2, setData2] = useState('');
     const [data2disabled, setData2disabled] = useState(false);
     const [clericalReviewThresholdsCount, setClericalReviewThresholdsCount] = useState(0)
@@ -251,25 +252,30 @@ const RecordLinkageConfigurationFullScreen = (props) => {
         if (file) {
             try {
                 const config = await readFileAsync(file);
-                if (setExistingConfig) {
+                                if (setExistingConfig) {
                     setActivePanels(['batchInformation', 'dbInformation', 'dataSources',
                         'blockingAndVariableInformation', 'modelOutputs', 'model',
                         'debugBlocks']
                     )
                     setData1(config.CONFIG.data1_name)
+                    setData1Display(config.CONFIG.data1_name)
                     setDeduplicationMode(config.CONFIG.mode === 'deduplication')
-                    console.log(deduplicationMode)
-                    if (!config.CONFIG.mode) {
+                    console.log(config.CONFIG.mode)
+                    if (config.CONFIG.mode === 'linkage') {
                         setData2(config.CONFIG.data2_name)
-                    } else {
+                        setData2Display(config.CONFIG.data2_name)
+                    }
+                    else {
                         setData1('left')
+                        setData1Display('left')
                         setData2('right')
+                        setData2Display('right')
                     }
 
                     form.setFieldsValue({
                         /** Project, Batch, and DB Info Begin */
                         projectPath: (config.CONFIG && config.CONFIG.projectPath) ? config.CONFIG.projectPath : '',
-                        mode: (config.CONFIG && config.CONFIG.mode === 'deduplication'),
+                        mode: (config.CONFIG && config.CONFIG.mode === 'deduplication') ? config.CONFIG.mode : null,
                         ignore_duplicate_ids: !!(config.CONFIG && config.CONFIG.ignore_duplicate_ids),
                         model_only: !!(config.CONFIG && config.CONFIG.model_only),
                         debugmode: !!(config.CONFIG && config.CONFIG.debugmode),
@@ -414,15 +420,14 @@ const RecordLinkageConfigurationFullScreen = (props) => {
     }
 
     const generatePayload = (values) => {
-        console.log(values.mode)
         let payload = {
 
             config: {
                 CONFIG: {
                     /** Project, Batch, and DB Info Begin */
                     projectPath: values.projectPath ?? '',
-                    mode: values.mode ? 'deduplication' : 'linkage',
-                    target_table: values.mode ? data1 : null,
+                    mode: values.mode === 'deduplication' ? 'deduplication' : 'linkage',
+                    target_table: values.mode === 'deduplication' ? data1 : null,
                     ignore_duplicate_ids: values.ignore_duplicate_ids,
                     model_only: values.model_only,
                     debugmode: values.debugmode,
@@ -481,7 +486,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                         order: block.order,
                         block_name: block.block_name,
                     };
-                    if (!values.mode) {
+                    if (!values.mode === 'linkage') {
                         blockJSON[data1] = block.data1BlockVar;
                         blockJSON[data2] = block.data2BlockVar;
                     } else {
@@ -490,7 +495,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                     }
                     if (block.variable_filter_info && block.variable_filter_info.length > 0) {
                         blockJSON.variable_filter_info = {};
-                        if (!values.mode) {
+                        if (!values.mode === 'linkage') {
                             blockJSON.variable_filter_info[data1] = block.variable_filter_info[0]['data1VariableFilter'];
                             blockJSON.variable_filter_info[data2] = block.variable_filter_info[0]['data2VariableFilter'];
                         } else {
@@ -512,7 +517,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                         custom_variable_name: type.custom_variable_name,
                         match_type: type.match_type
                     };
-                    if (!values.mode) {
+                    if (!values.mode === 'linkage') {
                         typeJSON[data1] = type.data1TypeVar;
                         typeJSON[data2] = type.data2TypeVar;
                     } else {
@@ -535,7 +540,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
         };
         /* add custom selection statement */
         payload.config.CONFIG['custom_selection_statement'] = {}
-        if (!values.mode) {
+        if (!values.mode === 'linkage') {
             payload.config.CONFIG['custom_selection_statement'][`${data1}`] = values.data1CustomSelectionStatement ?? ''
             payload.config.CONFIG['custom_selection_statement'][`${data2}`] = values.data2CustomSelectionStatement ?? ''
         } else {

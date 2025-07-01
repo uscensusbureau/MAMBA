@@ -10,7 +10,7 @@ def address_comp(x, comp_type='comparison', headers = ''):
     :return:
     '''
     if x[0] is not None and x[1] is not None:
-        if x[0][0]==x[1][0]:
+        if x[0]==x[1]:
             if comp_type=='comparison':
                 return 1
             else:

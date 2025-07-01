@@ -520,7 +520,7 @@ I know, that seems confusing.  So The next two sections are going to run you thr
 31. type ```python run_match.py```
 You should see something like this
 ![demo_Business_data_run_debug_block](./Documentation/screenshots/demo_business_data_tutorial/complete_debug_block.png)
-32. Ok.  Now let's run the full model.  Go back into the GUI and remove the debug block. Download the updated file and then save it into your project directory.  Make sure to delete your old configuration from your project path.
+32. Ok.  Now let's run the full model.  Go back into the GUI and remove the debug block, then change Use Saved Model? to read 'full_model.joblib'. Download the updated file and then save it into your project directory.  Make sure to delete your old configuration from your project path.
 33. Once you've done that, got back to your terminal and type ```python run_match.py``` once again.
 34. Congratulations! You have run MAMBA!
 
