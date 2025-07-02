@@ -101,7 +101,7 @@ IF YOU ARE NOT using the GUI, then you will need to create a mamba_properties.ym
   - description: The number of subprocesses to run. The larger the number of subprocesses, the faster (but more memory intensive) your processing.
 - Database Creation Mode:
   - legacy_configuration_name: database_creation_mode
-  - description: when selected, creates the database from scratch.  When not, database creation is skipped.  NOTE: creating a database when you have an existing one will fail.  This is annoying but better than deleting your database by accident.
+  - description: when selected, creates the database from scratch.  When not, database creation is skipped.  NOTE: creating a database when you have an existing one, the program will fail and you will either need to delete or move the existing database.  This is annoying but better than deleting your database by accident.
 #### Tab: DB Information
 This tab tells MAMBA about the database it will be interacting with.
 - SQL Flavor
@@ -403,14 +403,14 @@ I know, that seems confusing.  So The next two sections are going to run you thr
 7. Create a folder in a location other than your MAMBA directory called 'demo_business_test'. I'm putting mine in my desktop.
 8. In the Project and Batch Information tab:
    1. Have your Project Sub-folder be the directory you created above.
-   2. Keep Ignore Duplicate IDs as No.
-   3. Keep Deduplication Mode and Model Only to No.
-   4. Use the 'Imputer' imputation method.
-   5. Turn Chatty Logger on and give the log file name as 'demo_log.log'
-   6. Assign 2 workers.
-   7. Turn Database Creation Mode to 'Create'
-   8. Keep the default DB Creation Chunksize (the parameter will only appear after moving the Database Creation Mode to 'Create')
-   9. Turn on Debug Mode
+   2. Deduplication Mode should be set to Linkage.
+   3. Keep Ignore Duplicate IDs as No.
+   4. Debug Mode to Yes.
+   5. Use the 'No Imputation' imputation method.
+   6. Turn Chatty Logger on and give the log file name as 'demo_log.log'
+   7. Assign 2 workers.
+   8. Turn Database Creation Mode to 'Create'
+   9. Keep the default DB Creation Chunksize (the parameter will only appear after moving the Database Creation Mode to 'Create')
 9. Your screen should look like this:
 ![demo_business_data_project_batch_info](./Documentation/screenshots/demo_business_data_tutorial/project_batch_info.png)
 10. For our database information, we will use SQLite and call the database name 'sqlite_db.db'.
@@ -446,12 +446,14 @@ I know, that seems confusing.  So The next two sections are going to run you thr
        2. internal variable: name
        3. external variable: name
        4. Match Type: fuzzy
+       
        ![demo_business_data_name](./Documentation/screenshots/demo_business_data_tutorial/name.png)
     2. Address: comparing the addresses of the candidate pairs
        1. Variable Name: address
        2. internal variable: street_address
        3. external variable: address
        4. Match Type: exact
+       
        ![demo_business_data_address](./Documentation/screenshots/demo_business_data_tutorial/address.png)
     3. AddressNumber: this is a quick test of a custom function for address number.  The actual function doesn't make any sense.
        1. Variable Name: address_number
@@ -462,12 +464,14 @@ I know, that seems confusing.  So The next two sections are going to run you thr
        6. Custom Variable Kwargs:
           1. Keyword Argument Name: comp_type
           2. Keyword Argument Value: comparison
+       
        ![demo_business_data_address_number](./Documentation/screenshots/demo_business_data_tutorial/address_number.png)
     4. geo_distance: how far apart are the records? Note here that we just fill in 'geo' but those columns don't exist, under the hood MAMBA pulls the latitude and longitude variables
        1. Variable Name: geo_distance
        2. internal variable: LEAVE BLANK
        3. external variable: LEAVE BLANK
        4. Match Type: Geographic Distance
+       
        ![demo_business_data_geo_distance](./Documentation/screenshots/demo_business_data_tutorial/geo_distance.png)
     5. founding_date: this variable compares the founding dates of the candidate pair
        1. Variable Name: founding_date
@@ -482,12 +486,13 @@ I know, that seems confusing.  So The next two sections are going to run you thr
        3. external variable: name
        4. Match Type: fuzzy
        5. Filter Information (click on 'Click to make this variable a filter' button)
-          6. Filter Test: >
+          6. Filter Test: "Greater Than"
           7. Filter Value: .1
           8. Fuzzy Name: qgram3
-              ![demo_business_data_fuzzy_filter](./Documentation/screenshots/demo_business_data_tutorial/name_filter.png)
-16. When you're done with your variables and blocks, you should see something like this when you have both in 'collapsed' view:
-![demo_business_blocks_vars](./Documentation/screenshots/demo_business_data_tutorial/blocks_vars.png)
+          
+       ![demo_business_data_fuzzy_filter](./Documentation/screenshots/demo_business_data_tutorial/name_filter.png)
+16. When you're done with your variables and blocks, turn off the exapanded view, you should see something like this:
+![demo_business_blocks_vars](./Documentation/screenshots/demo_business_data_tutorial/blocks_and_vars.png)
 17. No let's fix our Model.  
     1. Predictions:
        1. Generate? Yes
