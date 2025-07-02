@@ -513,7 +513,7 @@ I know, that seems confusing.  So The next two sections are going to run you thr
 20. Then select to fit an AdaBoost model and a Random Forest model, with Random Forest Jobs being 1.
 21. The training data file is 'training_data.csv'
 22. Saved Model Name will be 'full_model.joblib'
-23. For the Fuzzy Variables used, select Edit (Lev.) Distance, Jaro-Winkler, Longest Common Substring (3), Qgram (3, Trigram), and Smith-Waterman distance.  There is not particular logic here, this is just to show you how you would select different fuzzy variable types.
+23. For the Fuzzy Variables used, select Edit (Lev.) Distance, Jaro-Winkler, Longest Common Substring (3), Qgram (3, Trigram), and Smith-Waterman distance.  There is no particular logic here, this is just to show you how you would select different fuzzy variable types.
 ![demo_business_data_the_model](./Documentation/screenshots/demo_business_data_tutorial/the_model_full.png)
 24. Finally, let's do a debug blocks of 829
 ![demo_business_data_debug_block](./Documentation/screenshots/demo_business_data_tutorial/debug_block.png)
