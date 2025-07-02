@@ -410,6 +410,7 @@ I know, that seems confusing.  So The next two sections are going to run you thr
    6. Assign 2 workers.
    7. Turn Database Creation Mode to 'Create'
    8. Keep the default DB Creation Chunksize (the parameter will only appear after moving the Database Creation Mode to 'Create')
+   9. Turn on Debug Mode
 9. Your screen should look like this:
 ![demo_business_data_project_batch_info](./Documentation/screenshots/demo_business_data_tutorial/project_batch_info.png)
 10. For our database information, we will use SQLite and call the database name 'sqlite_db.db'.
@@ -441,7 +442,7 @@ I know, that seems confusing.  So The next two sections are going to run you thr
     ![demo_business_data_blocks](./Documentation/screenshots/demo_business_data_tutorial/blocks.png)
 15. Now our variables.  We will have several variables in this model just to show you the different capabilities of the system.
     1. Name: comparing the names of the candidate pairs
-       1. Variable Name: Name
+       1. Variable Name: name
        2. internal variable: name
        3. external variable: name
        4. Match Type: fuzzy
@@ -497,10 +498,10 @@ I know, that seems confusing.  So The next two sections are going to run you thr
        1. Generate? Yes
        2. Clerical Review Candidates Table Name: clerical_review_candidates
        3. Clerical Review Threshold:
-          26. Variable Name: name_qgram3
-          27. Value: .4
+          1. Variable Name: name_qgram3
+          2. Value: .4
        4. Query Logic: Leave Blank
-       ![demo_business_data_date](./Documentation/screenshots/demo_business_data_tutorial/date.png)
+          ![The Model](./Documentation/screenshots/demo_business_data_tutorial/the_model_full.png)
 
 18. Now Let's build our Model.  
 19. Turn on 'Use Built-In MAMBA Models'
