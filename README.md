@@ -406,7 +406,7 @@ I know, that seems confusing.  So The next two sections are going to run you thr
    2. Deduplication Mode should be set to Linkage.
    3. Keep Ignore Duplicate IDs as No.
    4. Debug Mode to Yes.
-   5. Use the 'No Imputation' imputation method.
+   5. Use the 'Imputer' imputation method.
    6. Turn Chatty Logger on and give the log file name as 'demo_log.log'
    7. Assign 2 workers.
    8. Turn Database Creation Mode to 'Create'

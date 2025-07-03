@@ -159,7 +159,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
     const [useRandomForest, setUseRandomForest] = useState(false)
     const [useMambaModels, setUseMambaModels] = useState(false)
     const [useCustomModel, setUseCustomModel] = useState(null)
-    const [deduplicationMode, setDeduplicationMode] = useState('')
+    const [deduplicationMode, setDeduplicationMode] = useState(false)
     // debouncing the selection for data1 (so typing doesn't mess with what the selection is)
     useEffect(() => {
         const timeoutId = setTimeout(() => {
@@ -171,7 +171,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
 
     const data1OnChange = (event) => {
         setData1(event.target.value);
-        if (deduplicationMode==='Deduplication') {
+        if (deduplicationMode) {
             setData1Display('left')
         } else {
             setData1Display(event.target.value)
@@ -199,11 +199,15 @@ const RecordLinkageConfigurationFullScreen = (props) => {
     };
     //change deduplication mode
     const handleDeduplicationChange = (value) => {
-        setDeduplicationMode(value)
         if (value === true) {
             setData2('right')
+            setDeduplicationMode(true)
+        }
+        else{
+            setDeduplicationMode(false)
         }
     }
+    
     const handleDBModeChange = (value) => {
         setDBCreationMode(value);
     }
@@ -252,8 +256,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
         if (file) {
             try {
                 const config = await readFileAsync(file);
-                console.log(config)
-                                if (setExistingConfig) {
+                if (setExistingConfig) {
                     setActivePanels(['batchInformation', 'dbInformation', 'dataSources',
                         'blockingAndVariableInformation', 'modelOutputs', 'model',
                         'debugBlocks']
@@ -264,17 +267,19 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                     if (config.CONFIG.mode === 'linkage') {
                         setData2(config.CONFIG.data2_name)
                         setData2Display(config.CONFIG.data2_name)
+                        setDeduplicationMode(false)
                     }
                     else {
                         setData1('left')
                         setData1Display('left')
                         setData2('right')
                         setData2Display('right')
+                        setDeduplicationMode(true)
                     }
                     form.setFieldsValue({
                         /** Project, Batch, and DB Info Begin */
                         projectPath: (config.CONFIG && config.CONFIG.projectPath) ? config.CONFIG.projectPath : '',
-                        mode: (config.CONFIG && config.CONFIG.mode) ? config.CONFIG.mode : null,
+                        mode: (config.CONFIG.mode && config.CONFIG.mode == 'deduplication'),
                         ignore_duplicate_ids: !!(config.CONFIG && config.CONFIG.ignore_duplicate_ids),
                         model_only: !!(config.CONFIG && config.CONFIG.model_only),
                         debugmode: !!(config.CONFIG && config.CONFIG.debugmode),
@@ -309,8 +314,8 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                         blocks: config.blocks ? config.blocks.map(block => ({
                             order: block.order,
                             block_name: block.block_name,
-                            data1BlockVar: config.CONFIG.mode === 'deduplication' ? block['left'] : block[config.CONFIG.data2_name],
-                            data2BlockVar: config.CONFIG.mode === 'deduplication' ? block['right'] : block[config.CONFIG.data2_name],
+                            data1BlockVar: config.CONFIG.mode ? block['left'] : block[config.CONFIG.data2_name],
+                            data2BlockVar: config.CONFIG.mode ? block['right'] : block[config.CONFIG.data2_name],
                             variable_filter_info: block['variable_filter_info'] ? [{
                                 data1VariableFilter: block.variable_filter_info[config.CONFIG.data1_name],
                                 data2VariableFilter: block.variable_filter_info[config.CONFIG.data2_name],
@@ -323,8 +328,8 @@ const RecordLinkageConfigurationFullScreen = (props) => {
 
                         variable_types: config.var_types ? config.var_types.map(type => ({
                             variable_name: type.variable_name,
-                            data1TypeVar: config.CONFIG.mode === 'deduplication' ? type['left'] : type[config.CONFIG.data1_name],
-                            data2TypeVar: config.CONFIG.mode === 'deduplication' ? type['right'] : type[config.CONFIG.data2_name],
+                            data1TypeVar: config.CONFIG.mode ? type['left'] : type[config.CONFIG.data1_name],
+                            data2TypeVar: config.CONFIG.mode ? type['right'] : type[config.CONFIG.data2_name],
                             match_type: type.match_type ?? '',
                             custom_variable_name: type.custom_variable_name ?? '',
                             custom_kwarg_args: type.custom_variable_kwargs ? Object.keys(type.custom_variable_kwargs).map(argKey => ({
@@ -426,8 +431,8 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                 CONFIG: {
                     /** Project, Batch, and DB Info Begin */
                     projectPath: values.projectPath ?? '',
-                    mode: values.mode,
-                    target_table: values.mode === 'Deduplication' ? data1 : null,
+                    mode: values.mode ? 'deduplication' : 'linkage',
+                    target_table: values.mode ? data1 : null,
                     ignore_duplicate_ids: values.ignore_duplicate_ids,
                     model_only: values.model_only,
                     debugmode: values.debugmode,
@@ -486,7 +491,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                         order: block.order,
                         block_name: block.block_name,
                     };
-                    if (values.mode === 'linkage') {
+                    if (!values.mode) {
                         blockJSON[data1] = block.data1BlockVar;
                         blockJSON[data2] = block.data2BlockVar;
                     } else {
@@ -495,7 +500,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                     }
                     if (block.variable_filter_info && block.variable_filter_info.length > 0) {
                         blockJSON.variable_filter_info = {};
-                        if (values.mode === 'linkage') {
+                        if (!values.mode) {
                             blockJSON.variable_filter_info[data1] = block.variable_filter_info[0]['data1VariableFilter'];
                             blockJSON.variable_filter_info[data2] = block.variable_filter_info[0]['data2VariableFilter'];
                         } else {
@@ -517,7 +522,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                         custom_variable_name: type.custom_variable_name,
                         match_type: type.match_type
                     };
-                    if (values.mode === 'linkage') {
+                    if (!values.mode) {
                         typeJSON[data1] = type.data1TypeVar;
                         typeJSON[data2] = type.data2TypeVar;
                     } else {
@@ -540,7 +545,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
         };
         /* add custom selection statement */
         payload.config.CONFIG['custom_selection_statement'] = {}
-        if (values.mode === 'linkage') {
+        if (!values.mode) {
             payload.config.CONFIG['custom_selection_statement'][`${data1}`] = values.data1CustomSelectionStatement ?? ''
             payload.config.CONFIG['custom_selection_statement'][`${data2}`] = values.data2CustomSelectionStatement ?? ''
         } else {
@@ -605,7 +610,8 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                         tooltip="Are you linking two datasets or de-duplicating a single dataset?"
                         style={{marginBottom: 0, marginRight: 100}}
                     >
-                        <Switch checkedChildren="Deduplication" unCheckedChildren="linkage"
+                        <Switch checkedChildren="deduplication"
+                                unCheckedChildren="linkage"
                                 onClick={handleDeduplicationChange}/>
                     </Form.Item>
                     <Form.Item
@@ -805,7 +811,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
             </Col>
         </Row>
         {
-            deduplicationMode!=='Deduplication' && <>
+            !deduplicationMode && <>
                 <Typography.Title level={5}>
                     Data 2 (The second data source)
                 </Typography.Title>
@@ -1733,7 +1739,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                                           key: 'blockingAndVariableInformation',
                                           label: 'Blocking and Variable Information',
                                           children: blockingAndVariableInformationFields,
-                                          collapsible: ((data1 && data2) || (data1 && deduplicationMode!='Deduplication')) ? 'icon' : 'disabled'
+                                          collapsible: ((data1 && data2) || (data1 && !deduplicationMode)) ? 'icon' : 'disabled'
                                       },
                                       {
                                           key: 'modelOutputs',
