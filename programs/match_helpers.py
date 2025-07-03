@@ -853,9 +853,9 @@ def match_fun(arg):
         ####Also only done if we have any records to match
         if int(arg['block_info']['order']) > 1 and len(input_data) > 0:
             ###different queries if we are dealing with
-            matched_data = pd.DataFrame(get_table_noconn('''select {}_id::text, {}_id::text from {} 
-                            where batch_summary_id={} '''.format(CONFIG['data1_name'], CONFIG['data2_name'],
-                                                         CONFIG['matched_pairs_table_name'], arg['batch_summary_id']), db))
+            matched_data = pd.DataFrame(get_table_noconn('''select cast({data1}_id as text) {data1}_id, cast({data2}_id as text) {data2}_id from {table_name} 
+                            where batch_summary_id={batch_summary} '''.format(**{'data1':CONFIG['data1_name'],'data2':CONFIG['data2_name'],
+                                                         'table_name':CONFIG['matched_pairs_table_name'], 'batch_summary':arg['batch_summary_id']}), db))
             ###merge, keep only the input records NOT in matched_data if this is the second block
             if len(matched_data) > 0 and int(arg['block_info']['order']) > 1:
                 input_data = input_data.merge(matched_data[['{}_id'.format(CONFIG['data1_name']), '{}_id'.format(CONFIG['data2_name'])]],
