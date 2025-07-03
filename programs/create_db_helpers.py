@@ -328,7 +328,7 @@ def createDatabase(databaseName):
                 logger.info('File {} does not exist.  Passing'.format(data_source))
                 ###Handbreak--if clerical review candidates/matched pairs exist, change their names to the current date/time
         except Exception as error:
-            logger.info("Error creating table {}, error {}".format(data_source, error))
+            logger.info("Error creating table {}, error {}.  Check that your blocks and variables are correctly defined and have the right names.".format(data_source, error))
     '''
     Removing this: From now on, will just attach the batch_id to the inputs
     '''

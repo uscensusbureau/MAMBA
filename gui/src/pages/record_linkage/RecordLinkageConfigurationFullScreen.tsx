@@ -207,7 +207,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
             setDeduplicationMode(false)
         }
     }
-    
+
     const handleDBModeChange = (value) => {
         setDBCreationMode(value);
     }
@@ -314,8 +314,8 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                         blocks: config.blocks ? config.blocks.map(block => ({
                             order: block.order,
                             block_name: block.block_name,
-                            data1BlockVar: config.CONFIG.mode ? block['left'] : block[config.CONFIG.data2_name],
-                            data2BlockVar: config.CONFIG.mode ? block['right'] : block[config.CONFIG.data2_name],
+                            data1BlockVar: config.CONFIG.mode==='deduplication' ? block['left'] : block[config.CONFIG.data2_name],
+                            data2BlockVar: config.CONFIG.mode==='deduplication' ? block['right'] : block[config.CONFIG.data2_name],
                             variable_filter_info: block['variable_filter_info'] ? [{
                                 data1VariableFilter: block.variable_filter_info[config.CONFIG.data1_name],
                                 data2VariableFilter: block.variable_filter_info[config.CONFIG.data2_name],
@@ -328,8 +328,8 @@ const RecordLinkageConfigurationFullScreen = (props) => {
 
                         variable_types: config.var_types ? config.var_types.map(type => ({
                             variable_name: type.variable_name,
-                            data1TypeVar: config.CONFIG.mode ? type['left'] : type[config.CONFIG.data1_name],
-                            data2TypeVar: config.CONFIG.mode ? type['right'] : type[config.CONFIG.data2_name],
+                            data1TypeVar: config.CONFIG.mode==='deduplication' ? type['left'] : type[config.CONFIG.data1_name],
+                            data2TypeVar: config.CONFIG.mode==='deduplication' ? type['right'] : type[config.CONFIG.data2_name],
                             match_type: type.match_type ?? '',
                             custom_variable_name: type.custom_variable_name ?? '',
                             custom_kwarg_args: type.custom_variable_kwargs ? Object.keys(type.custom_variable_kwargs).map(argKey => ({
@@ -340,13 +340,13 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                                     {
                                         test: type.filter_only['test'],
                                         value: type.filter_only['value'],
-                                        fuzzy_name: type.filter_only['fuzzy_name'] ? type.filter_only['fuzzy_name'] : null
+                                        fuzzy_name: type.filter_only['fuzzy_name'] ? fuzzyOptions.find(item => item.value.replace('feb.','')===type.filter_only['fuzzy_name'].replace('feb.','')).value : null
                                     }]
                                 : []
                         })) : [],
                         /** Blocking and Variable Information End */
                         /** Model Outputs Start */
-                        prediction: (config.CONFIG && config.CONFIG.prediction) ? true : false,
+                        prediction: !!(config.CONFIG && config.CONFIG.prediction),
                         match_threshold: (config.CONFIG && config.CONFIG.match_threshold) ? config.CONFIG.match_threshold : .5,
                         scoringcriteria: (config.CONFIG && config.CONFIG.scoringcriteria) ? config.CONFIG.scoringcriteria : '',
                         matched_pairs_table_name: (config.CONFIG && config.CONFIG.matched_pairs_table_name) ? config.CONFIG.matched_pairs_table_name : '',
@@ -871,6 +871,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                                         <Col span={12}>
                                             <Form.Item
                                                 label="Order"
+                                                rules={[{required: true}]}
                                                 name={[field.name, 'order']}>
                                                 <InputNumber min={1}/>
                                             </Form.Item>
@@ -878,6 +879,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                                         <Col span={12}>
                                             <Form.Item
                                                 label="Block Name"
+                                                rules={[{required: true}]}
                                                 name={[field.name, 'block_name']}>
                                                 <Input/>
                                             </Form.Item>
@@ -888,7 +890,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                                             <Form.Item
                                                 label={`${data1Display} variable(s)`}
                                                 name={[field.name, 'data1BlockVar']}
-                                                rules={[{min: 2, message: 'foo'}]}
+                                                rules={[{required: true}]}
                                                 tooltip='comma and space-separated variables used to construct this block.'>
                                                 <Input/>
                                             </Form.Item>
@@ -897,6 +899,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                                             <Form.Item
                                                 label={`${data2} variable(s)`}
                                                 name={[field.name, 'data2BlockVar']}
+                                                rules={[{required: true}]}
                                                 tooltip='comma and space-separated variables used to construct this block.'>
                                                 <Input disabled={data2disabled}/>
                                             </Form.Item>
@@ -918,6 +921,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                                                             <Col span={12}>
                                                                 <Form.Item
                                                                     label={`${data1Display} variable name`}
+                                                                    rules={[{required:true}]}
                                                                     name={[subField.name, 'data1VariableFilter']}>
                                                                     <Input/>
                                                                 </Form.Item>
@@ -925,6 +929,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                                                             <Col span={12}>
                                                                 <Form.Item
                                                                     label={`${data2} variable name`}
+                                                                    rules={[{required:true}]}
                                                                     name={[subField.name, 'data2VariableFilter']}>
                                                                     <Input/>
                                                                 </Form.Item>
@@ -1223,7 +1228,7 @@ const RecordLinkageConfigurationFullScreen = (props) => {
                                                                 label="Fuzzy Name"
                                                                 tooltip={"If this is a fuzzy variable, what is the fuzzy metric (e.g. jaro, qgram3) you want to use?"}
                                                                 name={[subField.name, 'fuzzy_name']}>
-                                                                <Input/>
+                                                                <Select options={fuzzyOptions}/>
                                                             </Form.Item>
                                                         </Card>
                                                     ))}

@@ -535,7 +535,7 @@ def filter_variable_data(data, v_arg):
     data = data.merge(data2_values, left_on='{}_id'.format(CONFIG['data2_name']), right_on='id')
     ###identify the function we need to run:
     if v_arg['match_type']=='fuzzy':
-       target_fun=[i for i in methods if i.__name__==v_arg['filter_only']['fuzzy_name']][0]
+       target_fun=[i for i in methods if i.__name__==v_arg['filter_only']['fuzzy_name'].replace('feb.','')][0]
        data['score'] = data.apply(lambda x: target_fun(x['data1_target'].lower(), x['data2_target'].lower()) if x['data1_target']!='NULL' and x['data2_target']!='NULL'
                                                      else 0, axis=1)
     ###Now the exact matches##
